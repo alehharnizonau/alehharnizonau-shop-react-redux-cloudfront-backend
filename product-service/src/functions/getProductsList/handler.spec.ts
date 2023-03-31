@@ -10,6 +10,4 @@ describe('getProductsList handler', () => {
     expect(statusCode).toBe(Status.Success);
     expect(body).toEqual(JSON.stringify(products));
   });
-
-
 });
