@@ -4,7 +4,7 @@ import { getProductsById, getProductsList } from "@functions/handlers";
 const serverlessConfiguration: AWS = {
   service: 'product-service',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild'],
+  plugins: ['serverless-auto-swagger', 'serverless-esbuild'],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',

@@ -10,7 +10,10 @@ export const getProductsById = (async (event: APIGatewayProxyEvent): Promise<API
     if (product) {
       return formatJSONResponse({ statusCode: Status.Success, data: product });
     }
-    return formatJSONResponse({ statusCode: Status.Error, data: { message: `Product ${ErrorMessage.NotFound}` } })
+    return formatJSONResponse({
+      statusCode: Status.Error,
+      data: { message: `Product ${ErrorMessage.NotFound}`, data: {} }
+    })
   } catch (e) {
     return formatJSONResponse({ statusCode: Status.ServerError, data: { message: ErrorMessage.ServerError, data: e } });
   }

@@ -1,4 +1,6 @@
-export const formatJSONResponse = ({ statusCode, data }: { statusCode: number, data: any }) => (
+import { ResponseTypes } from "../types/api-types";
+
+export const formatJSONResponse = ({ statusCode, data }: { statusCode: number, data: ResponseTypes }) => (
   {
     statusCode,
     body: JSON.stringify(data),
