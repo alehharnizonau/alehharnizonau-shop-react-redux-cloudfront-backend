@@ -7,19 +7,7 @@ export interface Product {
 
 export type Products = Product[]
 
-export interface ProductsNotFound {
-  message: string,
-  data: []
+export interface DataError<T> {
+  message: string;
+  data: T;
 }
-
-export interface ProductNotFound {
-  message: string,
-  data: {}
-}
-
-export interface ServerError {
-  message: string,
-  data: unknown
-}
-
-export type ResponseTypes = Product | Products | ProductsNotFound | ProductNotFound | ServerError

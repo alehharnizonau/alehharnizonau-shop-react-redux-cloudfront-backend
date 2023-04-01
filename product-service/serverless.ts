@@ -1,5 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 import { getProductsById, getProductsList } from "@functions/handlers";
+import { pathApi } from "./src/constants";
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -32,6 +33,10 @@ const serverlessConfiguration: AWS = {
       platform: 'node',
       concurrency: 10,
     },
+    autoswagger: {
+      host: pathApi,
+      basePath: '/dev'
+    }
   },
 };
 

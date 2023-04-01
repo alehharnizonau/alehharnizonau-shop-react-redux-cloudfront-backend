@@ -1,6 +1,11 @@
-import { ResponseTypes } from "../types/api-types";
+import { DataError, Product, Products } from "../types/api-types";
 
-export const formatJSONResponse = ({ statusCode, data }: { statusCode: number, data: ResponseTypes }) => (
+type ResponseType = Product | Products | DataError<[] | {} | unknown>;
+
+export const formatJSONResponse = ({ statusCode, data }: {
+  statusCode: number,
+  data: ResponseType
+}) => (
   {
     statusCode,
     body: JSON.stringify(data),

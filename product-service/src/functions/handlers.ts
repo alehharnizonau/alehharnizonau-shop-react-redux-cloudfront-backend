@@ -15,11 +15,9 @@ export const getProductsList = {
           },
           404: {
             description: 'Products not found',
-            bodyType: 'ProductsNotFound'
           },
           500: {
             description: 'Internal server error',
-            bodyType: 'ServerError'
           }
         }
       },
@@ -42,11 +40,9 @@ export const getProductsById = {
           },
           404: {
             description: 'Product not found',
-            bodyType: 'ProductNotFound'
           },
           500: {
             description: 'Internal server error',
-            bodyType: 'ServerError'
           }
         }
       },
