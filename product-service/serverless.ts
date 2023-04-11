@@ -1,6 +1,9 @@
 import type { AWS } from '@serverless/typescript';
-import { getProductsById, getProductsList } from "@functions/handlers";
+import { createProduct, dynamoDBInit, getProductsById, getProductsList } from "@functions/handlers";
 import { pathApi } from "./src/constants";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -18,9 +21,25 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      DYNAMO_DB_PRODUCTS: process.env.DYNAMO_DB_PRODUCTS,
+      DYNAMO_DB_STOCKS: process.env.DYNAMO_DB_STOCKS
+    },
+    iam: {
+      role: {
+        statements: [{
+          Effect: "Allow",
+          Action: [
+            "dynamodb:*",
+          ],
+          Resource: [
+            { "Fn::GetAtt": ["ProductsTable", "Arn"] },
+            { "Fn::GetAtt": ["StocksTable", "Arn"] },
+          ],
+        }],
+      },
     },
   },
-  functions: { getProductsList, getProductsById },
+  functions: { getProductsList, getProductsById, dynamoDBInit, createProduct },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -38,6 +57,46 @@ const serverlessConfiguration: AWS = {
       basePath: '/dev'
     }
   },
+  resources: {
+    Resources: {
+      ProductsTable: {
+        Type: "AWS::DynamoDB::Table",
+        Properties: {
+          TableName: "${self:provider.environment.DYNAMO_DB_PRODUCTS}",
+          AttributeDefinitions: [{
+            AttributeName: "id",
+            AttributeType: "S",
+          }],
+          KeySchema: [{
+            AttributeName: "id",
+            KeyType: "HASH"
+          }],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1
+          },
+        }
+      },
+      StocksTable: {
+        Type: "AWS::DynamoDB::Table",
+        Properties: {
+          TableName: "${self:provider.environment.DYNAMO_DB_STOCKS}",
+          AttributeDefinitions: [{
+            AttributeName: "product_id",
+            AttributeType: "S",
+          }],
+          KeySchema: [{
+            AttributeName: "product_id",
+            KeyType: "HASH"
+          }],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1
+          },
+        }
+      },
+    }
+  }
 };
 
 module.exports = serverlessConfiguration;
