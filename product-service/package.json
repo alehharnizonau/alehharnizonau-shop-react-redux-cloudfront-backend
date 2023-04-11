@@ -8,7 +8,7 @@
     "remove": "sls remove",
     "test": "jest --passWithNoTests",
     "generate": "sls generate-swagger",
-    "autpFillTables": "npx ts-node scripts/autoFillTables.ts"
+    "autoFillTables": "npx ts-node scripts/autoFillTables.ts"
   },
   "engines": {
     "node": ">=14.15.0"

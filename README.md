@@ -8,15 +8,19 @@ This is backend part of starter project for nodejs-aws mentoring program. It use
 - [serverless-esbuild](https://www.serverless.com/plugins/serverless-esbuild) as a typeScript bundler
 - [TypeScript](https://www.typescriptlang.org/) as a type checking tool
 - [jest](https://jestjs.io/) as testing framework
+- [dotenv](https://github.com/motdotla/dotenv) as a a zero-dependency module that loads environment variables from a .env file into process.env
+- [uuid](https://github.com/uuidjs/uuid) as a creator of RFC4122 UUIDs
+- [json-schema-to-ts](https://github.com/bcherny/json-schema-to-typescript) as a compiler of json schemas to typescript typings
 ___
 
 # Backend
 
 | Lambda          | Description                   | Method | URL                                                                                                      |
-| --------------- | ----------------------------- | ------ |----------------------------------------------------------------------------------------------------------|
-| getProductsList | get ALL products              | GET    | https://qq1272e6fd.execute-api.us-east-1.amazonaws.com/dev/products                                      |
-| getProductsById | get ONE product in JSON by id | GET    | https://qq1272e6fd.execute-api.us-east-1.amazonaws.com/dev/products/7567ec4b-b10c-45c5-9345-fc73c48a80a1 |
-| getProductsById | Product not found             | GET    | https://qq1272e6fd.execute-api.us-east-1.amazonaws.com/dev/products/1                                    |
+| --------------- |-------------------------------| ------ |----------------------------------------------------------------------------------------------------------|
+| getProductsList | get ALL products              | GET    | https://rb05wuzhm4.execute-api.us-east-1.amazonaws.com/dev/products                                    |
+| getProductsById | get ONE product  by id | GET    | https://rb05wuzhm4.execute-api.us-east-1.amazonaws.com/dev/products/ff0dae18-9014-4946-82ee-e220e2ace9f9 |
+| getProductsById | Product not found             | GET    | https://rb05wuzhm4.execute-api.us-east-1.amazonaws.com/dev/products/1                                    |
+| createProduct | Product creation              | GET    | https://rb05wuzhm4.execute-api.us-east-1.amazonaws.com/dev/products                                      |
 
 # Frontend
 
@@ -24,7 +28,7 @@ ___
 
 # Swagger
 
-https://j6ygerj4b7.execute-api.us-east-1.amazonaws.com/swagger
+https://lupkpcixre.execute-api.us-east-1.amazonaws.com/swagger
 
 # Available Scripts
 
@@ -44,4 +48,10 @@ To run tests use
 
 ```
 npm run test
+```
+
+To autofill tables with test examples
+
+```
+npm run autoFillTables
 ```
