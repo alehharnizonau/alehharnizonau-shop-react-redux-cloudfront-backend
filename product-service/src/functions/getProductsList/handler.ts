@@ -1,13 +1,19 @@
 import { formatJSONResponse } from '@libs/api-gateway';
-import { APIGatewayProxyResult } from "aws-lambda/trigger/api-gateway-proxy";
-import { productProvider } from "../../providers/product-provider";
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda/trigger/api-gateway-proxy";
+import { productProvider, stockProvider } from "../../providers";
 import { ErrorMessage, Status } from "../../constants";
+import { getJoinedTables } from "../../utils";
 
-export const getProductsList = (async (): Promise<APIGatewayProxyResult> => {
+export const getProductsList = (async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  console.log(event);
   try {
-    const products = await productProvider.getProducts();
-    if (products.length) {
-      return formatJSONResponse({ statusCode: Status.Success, data: products });
+    const [products, stocks] = await Promise.all([
+      productProvider.getProducts(),
+      stockProvider.getStocks(),
+    ]);
+    const productsInStock = getJoinedTables(products, stocks);
+    if (productsInStock?.length) {
+      return formatJSONResponse({ statusCode: Status.Success, data: productsInStock });
     }
     return formatJSONResponse({
       statusCode: Status.Error,

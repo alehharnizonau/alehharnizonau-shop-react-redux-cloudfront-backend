@@ -1,4 +1,5 @@
 import { handlerPath } from '@libs/handler-resolver';
+import schema from "@functions/createProduct/schema";
 
 export const getProductsList = {
   handler: `${handlerPath(__dirname)}/getProductsList/handler.getProductsList`,
@@ -11,7 +12,7 @@ export const getProductsList = {
         responses: {
           200: {
             description: 'Successfully obtained list of products',
-            bodyType: 'Products'
+            bodyType: 'ProductsInStock'
           },
           404: {
             description: 'Products not found',
@@ -36,7 +37,7 @@ export const getProductsById = {
         responses: {
           200: {
             description: 'Successfully obtained product',
-            bodyType: 'Product'
+            bodyType: 'ProductInStock'
           },
           404: {
             description: 'Product not found',
@@ -48,4 +49,38 @@ export const getProductsById = {
       },
     },
   ],
+};
+
+export const createProduct = {
+  handler: `${handlerPath(__dirname)}/createProduct/handler.createProduct`,
+  events: [
+    {
+      http: {
+        method: 'post',
+        path: 'products',
+        cors: true,
+        responses: {
+          200: {
+            description: 'Successfully created product',
+            bodyType: 'ProductBody'
+          },
+          400: {
+            description: 'Product data is invalid',
+          },
+          500: {
+            description: 'Internal server error',
+          }
+        },
+        request: {
+          schemas: {
+            "application/json": schema,
+          },
+        },
+      },
+    },
+  ],
+};
+
+export const dynamoDBInit = {
+  handler: `${handlerPath(__dirname)}/dynamoDBInit/handler.dynamoDBInit`,
 };

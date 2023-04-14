@@ -1,6 +1,16 @@
-import { DataError, Product, Products } from "../types/api-types";
+import type { APIGatewayProxyEvent, APIGatewayProxyResult, Handler, } from 'aws-lambda';
+import type { FromSchema, JSONSchema } from 'json-schema-to-ts';
+import { DataError, ProductInStock, ProductsInStock } from "../types/api-types";
 
-type ResponseType = Product | Products | DataError<[] | {} | unknown>;
+type ValidatedAPIGatewayProxyEvent<S extends JSONSchema> = Omit<APIGatewayProxyEvent, 'body'> & {
+  body: FromSchema<S>;
+};
+export type ValidatedEventAPIGatewayProxyEvent<S extends JSONSchema> = Handler<
+  ValidatedAPIGatewayProxyEvent<S>,
+  APIGatewayProxyResult
+>;
+
+type ResponseType = ProductInStock | ProductsInStock | DataError<[] | {} | unknown> | { message: string };
 
 export const formatJSONResponse = ({ statusCode, data }: {
   statusCode: number,
