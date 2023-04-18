@@ -1,0 +1,18 @@
+{
+  "body": "{}",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "httpMethod": "GET",
+  "isBase64Encoded": false,
+  "path": "/",
+  "queryStringParameters": {
+    "name": "456.webp"
+  },
+  "pathParameters": "{}",
+  "stageVariables": "{}",
+  "multiValueHeaders": "{}",
+  "requestContext": "{}",
+  "resource": "/",
+  "multiValueQueryStringParameters": "{}"
+}
