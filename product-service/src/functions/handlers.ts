@@ -2,11 +2,11 @@ import { middyfy } from '@libs/middlewares';
 import { initCreateProduct } from "@functions/createProduct/handler";
 import { initGetProductsList } from "@functions/getProductsList/handler";
 import { initGetProductsById } from "@functions/getProductsById/handler";
+import { initCatalogBatchProcess } from "@functions/catalogBatchProcess/handler";
 import { productProvider, stockProvider } from "../providers";
-import { v4 } from "uuid";
 
 export const createProduct = middyfy(
-  initCreateProduct(productProvider.putProductWithStock, v4)
+  initCreateProduct(productProvider.createProduct)
 );
 
 export const getProductsList = middyfy(
@@ -16,3 +16,6 @@ export const getProductsList = middyfy(
 export const getProductsById = middyfy(
   initGetProductsById(productProvider.getProductById, stockProvider.getStockById)
 )
+
+export const catalogBatchProcess = initCatalogBatchProcess(productProvider.createProduct);
+

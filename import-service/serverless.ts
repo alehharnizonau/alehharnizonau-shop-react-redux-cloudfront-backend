@@ -25,6 +25,8 @@ const serverlessConfiguration: AWS = {
       ACCESS_KEY_ID: process.env.ACCESS_KEY_ID,
       SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY,
       SESSION_TOKEN: process.env.SESSION_TOKEN,
+      SQS_QUEUE: process.env.SQS_QUEUE,
+      SQS_QEUE_URL: process.env.SQS_QEUE_URL
     },
     iam: {
       role: {
@@ -38,6 +40,11 @@ const serverlessConfiguration: AWS = {
             Effect: 'Allow',
             Action: 's3:*',
             Resource: 'arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*',
+          },
+          {
+            Effect: 'Allow',
+            Action: 'sqs:*',
+            Resource: 'arn:aws:sqs:us-east-1:523175524473:${self:provider.environment.SQS_QUEUE}',
           },
         ],
       },

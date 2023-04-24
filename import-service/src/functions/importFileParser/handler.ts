@@ -1,8 +1,9 @@
 import { CopyObjectCommand, DeleteObjectCommand, GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { S3Event } from 'aws-lambda';
 import csvParser from 'csv-parser';
+import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 
-export const initImportFileParser = (s3: S3Client, bucket: string) =>
+export const initImportFileParser = (s3: S3Client, bucket: string, sqsClient: SQSClient) =>
   async (event: S3Event) => {
     console.log('initImportFileParser triggered with event:', event);
     try {
@@ -21,22 +22,33 @@ export const initImportFileParser = (s3: S3Client, bucket: string) =>
               CopySource: `${bucket}/${filePath}`,
             });
             const deleteCommand = new DeleteObjectCommand(params);
+
             const s3ResponseStream = (await s3.send(getCommand)).Body as NodeJS.ReadableStream;
-            const fileData: any[] = [];
 
             await new Promise((resolve, reject) => {
               s3ResponseStream
                 .pipe(csvParser({ separator: ";" }))
-                .on('data', (data) => {
-                  console.log('data: ', data);
-                  fileData.push(data);
+                .on('data', async (data) => {
+                  console.log('Processing data: ', data);
+                  try {
+                    const params = {
+                      QueueUrl: process.env.SQS_QEUE_URL,
+                      MessageBody: JSON.stringify(data),
+                    }
+                    await sqsClient.send(new SendMessageCommand(params))
+                  } catch (e) {
+                    console.log(`Failed to send product data ${data} to queue with error ${e}`);
+                  }
                 })
-                .on('error', reject)
+                .on('error', (error) => {
+                  console.log('Stream error: ', error);
+                  reject();
+                })
                 .on('end', async () => {
                   await s3.send(copyCommand);
                   await s3.send(deleteCommand);
-                  console.log('End of the stream with data: ', fileData);
-                  resolve(fileData);
+                  console.log(`End of the stream`);
+                  resolve(null);
                 });
             });
           }

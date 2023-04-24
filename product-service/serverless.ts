@@ -22,20 +22,22 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       DYNAMO_DB_PRODUCTS: process.env.DYNAMO_DB_PRODUCTS,
-      DYNAMO_DB_STOCKS: process.env.DYNAMO_DB_STOCKS
+      DYNAMO_DB_STOCKS: process.env.DYNAMO_DB_STOCKS,
     },
     iam: {
       role: {
-        statements: [{
-          Effect: "Allow",
-          Action: [
-            "dynamodb:*",
-          ],
-          Resource: [
-            { "Fn::GetAtt": ["ProductsTable", "Arn"] },
-            { "Fn::GetAtt": ["StocksTable", "Arn"] },
-          ],
-        }],
+        statements: [
+          {
+            Effect: 'Allow',
+            Action: 'dynamodb:*',
+            Resource: '*',
+          },
+          {
+            Effect: 'Allow',
+            Action: 's3:*',
+            Resource: '*',
+          }
+        ],
       },
     },
   },
@@ -63,38 +65,54 @@ const serverlessConfiguration: AWS = {
         Type: "AWS::DynamoDB::Table",
         Properties: {
           TableName: "${self:provider.environment.DYNAMO_DB_PRODUCTS}",
-          AttributeDefinitions: [{
-            AttributeName: "id",
-            AttributeType: "S",
-          }],
-          KeySchema: [{
-            AttributeName: "id",
-            KeyType: "HASH"
-          }],
+          AttributeDefinitions: [
+            {
+              AttributeName: "id",
+              AttributeType: "S",
+            }
+          ],
+          KeySchema: [
+            {
+              AttributeName: "id",
+              KeyType: "HASH"
+            }
+          ],
           ProvisionedThroughput: {
             ReadCapacityUnits: 1,
             WriteCapacityUnits: 1
           },
         }
       },
+
       StocksTable: {
         Type: "AWS::DynamoDB::Table",
         Properties: {
           TableName: "${self:provider.environment.DYNAMO_DB_STOCKS}",
-          AttributeDefinitions: [{
-            AttributeName: "product_id",
-            AttributeType: "S",
-          }],
-          KeySchema: [{
-            AttributeName: "product_id",
-            KeyType: "HASH"
-          }],
+          AttributeDefinitions: [
+            {
+              AttributeName: "product_id",
+              AttributeType: "S",
+            }
+          ],
+          KeySchema: [
+            {
+              AttributeName: "product_id",
+              KeyType: "HASH"
+            }
+          ],
           ProvisionedThroughput: {
             ReadCapacityUnits: 1,
             WriteCapacityUnits: 1
           },
         }
       },
+
+      sqsQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'product-service-sqs-queue-ha'
+        }
+      }
     }
   }
 };
