@@ -1,10 +1,7 @@
 import { S3Client, S3ClientConfig } from "@aws-sdk/client-s3"
 import { initImportProductsFile } from './importProductsFile/handler';
 import { initImportFileParser } from './importFileParser/handler';
-import { middyfy } from '@libs/lambda';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import { middyfy } from '@libs/middlewares';
 
 const {
   REGION,

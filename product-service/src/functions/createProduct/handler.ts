@@ -1,36 +1,43 @@
-import { APIGatewayProxyResult } from "aws-lambda/trigger/api-gateway-proxy";
-import { productProvider } from "../../providers";
-import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
-import { ErrorMessage, Status } from "../../constants";
-import schema from "@functions/createProduct/schema";
-import { v4 } from 'uuid';
+import { Handler } from "aws-lambda";
 import { isJson } from "../../utils";
-import { ProductWithCount } from "../../types";
+import { ProductFull, ProductWithCount } from "../../types";
+import { ErrorMessage, Status } from "../../constants";
+import { v4 } from "uuid";
+import { HttpResponse } from "@libs/responseTypes";
 
-export const createProduct: ValidatedEventAPIGatewayProxyEvent<typeof schema> = (async (event): Promise<APIGatewayProxyResult> => {
-  console.log(event.body);
+export const initCreateProduct = (putProducts: ({ title, description, price, id, count }: ProductFull) => Promise<{
+  message: string;
+  error?: undefined;
+} | { error: string; message?: undefined; }>, uuid: typeof v4): Handler => async (event): Promise<HttpResponse> => {
+  console.log('createProduct called with body: ', event.body);
   const data: ProductWithCount = isJson(event.body) ? JSON.parse(event.body as unknown as string) : event.body;
   try {
     const { title, description, count, price } = data;
     if (!title || !description || !count || !price) {
-      return formatJSONResponse({ statusCode: Status.InvalidData, data: { message: ErrorMessage.InvalidData } });
+      return { statusCode: Status.InvalidData, body: { message: ErrorMessage.InvalidData } };
     }
-    const product = { ...data, id: v4() };
-    const creationStatus = await productProvider.putProductWithStock(product);
+
+    const product = { ...data, id: uuid() };
+    const creationStatus = await putProducts(product);
 
     if (creationStatus.error) {
-      return formatJSONResponse({
+      return {
         statusCode: Status.ServerError,
-        data: { message: ErrorMessage.ServerError, data: creationStatus.error }
-      });
+        body: { message: ErrorMessage.ServerError, data: creationStatus.error }
+      };
     }
 
-    return formatJSONResponse({
+    return {
       statusCode: Status.Success,
-      data: { message: `${creationStatus.message}`, data: product }
-    });
-  } catch (e) {
-    return formatJSONResponse({ statusCode: Status.ServerError, data: { message: ErrorMessage.ServerError, data: e } });
+      body: { message: `${creationStatus.message}`, data: product }
+    };
+
+  } catch (e: unknown) {
+    console.error('createProduct error', e);
+    return {
+      statusCode: 500,
+      body: { message: e instanceof Error ? e.toString() : e },
+    };
   }
-})
+}
 

@@ -1,5 +1,5 @@
 import type { AWS } from '@serverless/typescript';
-import { createProduct, dynamoDBInit, getProductsById, getProductsList } from "@functions/handlers";
+import { functions } from '@functions/index';
 import { pathApi } from "./src/constants";
 import * as dotenv from 'dotenv';
 
@@ -39,7 +39,7 @@ const serverlessConfiguration: AWS = {
       },
     },
   },
-  functions: { getProductsList, getProductsById, dynamoDBInit, createProduct },
+  functions,
   package: { individually: true },
   custom: {
     esbuild: {

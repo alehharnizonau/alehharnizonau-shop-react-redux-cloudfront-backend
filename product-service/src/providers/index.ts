@@ -1,8 +1,5 @@
 import { DynamoDB } from "aws-sdk";
 import { Product, ProductFull, Stock } from "../types";
-import * as dotenv from 'dotenv';
-
-dotenv.config();
 
 const { DYNAMO_DB_PRODUCTS, DYNAMO_DB_STOCKS } = process.env;
 

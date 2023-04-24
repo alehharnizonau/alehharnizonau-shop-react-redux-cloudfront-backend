@@ -1,6 +1,6 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { getSignedUrl } from "@libs/handler-resolver";
 import { APIGatewayProxyEvent } from 'aws-lambda';
+import { getSignedUrl } from "../../utils";
 
 export const initImportProductsFile = (s3: S3Client, bucketName: string) =>
   async (event: APIGatewayProxyEvent) => {
