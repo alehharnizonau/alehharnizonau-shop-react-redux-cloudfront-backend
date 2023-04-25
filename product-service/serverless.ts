@@ -113,8 +113,9 @@ const serverlessConfiguration: AWS = {
           QueueName: 'product-service-sqs-queue-ha'
         }
       }
-    }
+    },
   }
+
 };
 
 module.exports = serverlessConfiguration;

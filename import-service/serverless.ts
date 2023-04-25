@@ -25,8 +25,7 @@ const serverlessConfiguration: AWS = {
       ACCESS_KEY_ID: process.env.ACCESS_KEY_ID,
       SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY,
       SESSION_TOKEN: process.env.SESSION_TOKEN,
-      SQS_QUEUE: process.env.SQS_QUEUE,
-      SQS_QEUE_URL: process.env.SQS_QEUE_URL
+      SQS_QUEUE: process.env.SQS_QUEUE
     },
     iam: {
       role: {

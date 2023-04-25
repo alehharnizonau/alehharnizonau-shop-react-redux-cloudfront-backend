@@ -32,12 +32,12 @@ export const initImportFileParser = (s3: S3Client, bucket: string, sqsClient: SQ
                   console.log('Processing data: ', data);
                   try {
                     const params = {
-                      QueueUrl: process.env.SQS_QEUE_URL,
+                      QueueUrl: process.env.SQS_QUEUE,
                       MessageBody: JSON.stringify(data),
                     }
                     await sqsClient.send(new SendMessageCommand(params))
                   } catch (e) {
-                    console.log(`Failed to send product data ${data} to queue with error ${e}`);
+                    console.log(`Failed to send product data to queue with error ${e}`);
                   }
                 })
                 .on('error', (error) => {
