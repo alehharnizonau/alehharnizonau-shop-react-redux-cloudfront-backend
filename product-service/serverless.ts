@@ -23,6 +23,9 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       DYNAMO_DB_PRODUCTS: process.env.DYNAMO_DB_PRODUCTS,
       DYNAMO_DB_STOCKS: process.env.DYNAMO_DB_STOCKS,
+      SNS_TOPIC_ARN: { Ref: 'snsTopic' },
+      GMAIL: process.env.GMAIL,
+      COM: process.env.COM
     },
     iam: {
       role: {
@@ -36,7 +39,14 @@ const serverlessConfiguration: AWS = {
             Effect: 'Allow',
             Action: 's3:*',
             Resource: '*',
-          }
+          },
+          {
+            Effect: 'Allow',
+            Action: 'sns:*',
+            Resource: {
+              Ref: 'snsTopic',
+            },
+          },
         ],
       },
     },
@@ -110,9 +120,41 @@ const serverlessConfiguration: AWS = {
       sqsQueue: {
         Type: 'AWS::SQS::Queue',
         Properties: {
-          QueueName: 'product-service-sqs-queue-ha'
+          QueueName: process.env.SQS
+        }
+      },
+
+      snsTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: process.env.SNS,
+        },
+      },
+
+      snsCheapProductsSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: "${self:provider.environment.GMAIL}",
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'snsTopic'
+          },
+          FilterPolicy: '{"price": [{"numeric": ["<", 10]}]}',
+        }
+      },
+
+      snsExpensiveProductsSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: "${self:provider.environment.COM}",
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'snsTopic'
+          },
+          FilterPolicy: '{"price": [{"numeric": [">=", 10]}]}',
         }
       }
+
     },
   }
 
