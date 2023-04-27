@@ -2,7 +2,7 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { initImportProductsFile } from "./handler";
 import { APIGatewayEventRequestContextWithAuthorizer } from "aws-lambda";
 import sinon from 'sinon';
-import * as getSignedUrl from '@libs/handler-resolver';
+import * as getSignedUrl from '../../utils';
 
 describe('importProductsFile', () => {
   const config = {

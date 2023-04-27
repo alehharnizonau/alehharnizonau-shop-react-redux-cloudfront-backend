@@ -1,3 +1,5 @@
+import { ErrorMessage, Status } from "../constants";
+
 export interface Product {
   description: string,
   id: string,
@@ -19,4 +21,9 @@ export interface ProductWithCount {
   count: number,
   price: number,
   title: string,
+}
+
+export interface CreationStatus {
+  message: ErrorMessage | string,
+  statusCode: Status
 }

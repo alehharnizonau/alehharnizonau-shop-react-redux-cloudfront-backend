@@ -1,8 +1,7 @@
 import { DynamoDB } from "aws-sdk";
-import { Product, ProductFull, Stock } from "../types";
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import { Product, ProductFull, ProductWithCount, Stock } from "../types";
+import { ErrorMessage, Status } from "../constants";
+import { v4 } from "uuid";
 
 const { DYNAMO_DB_PRODUCTS, DYNAMO_DB_STOCKS } = process.env;
 
@@ -61,10 +60,22 @@ export const productProvider = {
           }
         ],
       }).promise();
-      return { message: `Successfully created items` };
+      return { statusCode: Status.Success, message: `Successfully created items` };
     } catch (err) {
-      return { error: `DynamoDB error: ${err}` }
+      return { statusCode: Status.ServerError, message: `DynamoDB error: ${err}` }
     }
+  },
+  createProduct: async (product: ProductWithCount) => {
+    const { title, description, count, price } = product;
+    if (!title || !description || !count || !price) {
+      return { statusCode: Status.Error, message: ErrorMessage.InvalidData };
+    }
+
+    const newProduct = { ...product, id: v4() };
+    const creationStatus = await productProvider.putProductWithStock(newProduct);
+
+    const { statusCode, message } = creationStatus;
+    return { statusCode, message }
   }
 }
 

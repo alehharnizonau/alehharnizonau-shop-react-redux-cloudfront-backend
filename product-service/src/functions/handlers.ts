@@ -1,86 +1,41 @@
-import { handlerPath } from '@libs/handler-resolver';
-import schema from "@functions/createProduct/schema";
+import { middyfy } from '@libs/middlewares';
+import { initCreateProduct } from "@functions/createProduct/handler";
+import { initGetProductsList } from "@functions/getProductsList/handler";
+import { initGetProductsById } from "@functions/getProductsById/handler";
+import { initCatalogBatchProcess } from "@functions/catalogBatchProcess/handler";
+import { productProvider, stockProvider } from "../providers";
+import { SNSClient } from "@aws-sdk/client-sns";
 
-export const getProductsList = {
-  handler: `${handlerPath(__dirname)}/getProductsList/handler.getProductsList`,
-  events: [
-    {
-      http: {
-        method: 'get',
-        path: 'products',
-        cors: true,
-        responses: {
-          200: {
-            description: 'Successfully obtained list of products',
-            bodyType: 'ProductsInStock'
-          },
-          404: {
-            description: 'Products not found',
-          },
-          500: {
-            description: 'Internal server error',
-          }
-        }
-      },
-    },
-  ],
-};
 
-export const getProductsById = {
-  handler: `${handlerPath(__dirname)}/getProductsById/handler.getProductsById`,
-  events: [
-    {
-      http: {
-        method: 'get',
-        path: 'products/{productId}',
-        cors: true,
-        responses: {
-          200: {
-            description: 'Successfully obtained product',
-            bodyType: 'ProductInStock'
-          },
-          404: {
-            description: 'Product not found',
-          },
-          500: {
-            description: 'Internal server error',
-          }
-        }
-      },
-    },
-  ],
-};
+const {
+  REGION,
+  ACCESS_KEY_ID,
+  SECRET_ACCESS_KEY,
+  SESSION_TOKEN,
+} = process.env;
 
-export const createProduct = {
-  handler: `${handlerPath(__dirname)}/createProduct/handler.createProduct`,
-  events: [
-    {
-      http: {
-        method: 'post',
-        path: 'products',
-        cors: true,
-        responses: {
-          200: {
-            description: 'Successfully created product',
-            bodyType: 'ProductBody'
-          },
-          400: {
-            description: 'Product data is invalid',
-          },
-          500: {
-            description: 'Internal server error',
-          }
-        },
-        request: {
-          schemas: {
-            "application/json": schema,
-          },
-        },
-      },
-    },
-  ],
-};
+const configuration = () => Promise.resolve({
+  credentials: {
+    accessKeyId: ACCESS_KEY_ID,
+    secretAccessKey: SECRET_ACCESS_KEY,
+    sessionToken: SESSION_TOKEN
+  },
+  region: REGION,
+})
 
-export const dynamoDBInit = {
-  handler: `${handlerPath(__dirname)}/dynamoDBInit/handler.dynamoDBInit`,
-};
+const sns = new SNSClient(configuration);
+
+export const createProduct = middyfy(
+  initCreateProduct(productProvider.createProduct)
+);
+
+export const getProductsList = middyfy(
+  initGetProductsList(productProvider.getProducts, stockProvider.getStocks)
+)
+
+export const getProductsById = middyfy(
+  initGetProductsById(productProvider.getProductById, stockProvider.getStockById)
+)
+
+export const catalogBatchProcess = initCatalogBatchProcess(productProvider.createProduct, sns);
+

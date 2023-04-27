@@ -16,6 +16,9 @@ This is backend part of starter project for nodejs-aws mentoring program. It use
 - [middy/core](https://github.com/middyjs/middy) as a Node.js middleware engine for AWS Lambda
 - [aws-sdk/s3-request-presigner](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_s3_request_presigner.html) as a generator of signed url for S3
 - [sinon](https://github.com/sinonjs/sinon) as a standalone and test framework for agnostic JavaScript test spies, stubs and mocks
+- [aws-sdk/client-sns](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-sns/) as a Simple Notification Service
+- [aws-sdk/client-sqs](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-sqs/) as a reliable, highly-scalable hosted queue for storing messages
+- [aws-sdk-client-mock](https://www.npmjs.com/package/aws-sdk-client-mock) as a mocking library of AWS SDK v3 Clients.
 ___
 
 # Backend

@@ -1,0 +1,18 @@
+{
+  "body": "{}",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "httpMethod": "GET",
+  "isBase64Encoded": false,
+  "path": "/",
+  "queryStringParameters": "{}",
+  "pathParameters": {
+    "productId": "80015cc0-ed8f-4ade-8597-65dc9896dee2"
+  },
+  "stageVariables": "{}",
+  "multiValueHeaders": "{}",
+  "requestContext": "{}",
+  "resource": "/",
+  "multiValueQueryStringParameters": "{}"
+}
